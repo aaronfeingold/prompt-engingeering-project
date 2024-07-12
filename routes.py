@@ -40,11 +40,8 @@ def create_prompt():
             'created_at': prompt_response.created_at
         }), 201
     except openai.RateLimitError as e:
-        error_message = str(e)
-        # Handle specific errors
-        if "rate limit" in error_message.lower():
-            return jsonify({'error': 'API rate limit exceeded. Please try again later.'}), 429
-        else:
+        return jsonify({'error': 'API rate limit exceeded. Please try again later.'}), 429
+    except Exception as e:
             return jsonify({'error': 'An error occurred while processing your request.', 'details': error_message}), 500
 
 @app.route('/prompts', methods=['GET'])

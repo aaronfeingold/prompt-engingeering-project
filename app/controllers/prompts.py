@@ -1,4 +1,4 @@
-from services import PromptResponseService
+from app.services import PromptResponseService
 
 
 def create_new_prompt_response(client, prompt):

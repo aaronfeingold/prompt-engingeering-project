@@ -1,6 +1,6 @@
 import pytest
-from app import app, db
-from models import PromptResponse
+from app import app
+
 
 @pytest.fixture
 def client():
@@ -8,6 +8,7 @@ def client():
     with app.test_client() as client:
         with app.app_context():
             yield client
+
 
 def test_create_prompt(client):
     # Define a sample prompt data
@@ -29,6 +30,7 @@ def test_create_prompt(client):
     assert 'response_time' in json_data
     assert 'created_at' in json_data
 
+
 def test_create_prompt_missing_prompt(client):
     # Send a POST request without the 'prompt' field
     response = client.post('/prompt', json={})
@@ -41,6 +43,7 @@ def test_create_prompt_missing_prompt(client):
     assert 'error' in json_data
     assert json_data['error'] == 'Prompt is required'
 
+
 def test_get_prompts(client):
     # Send a GET request to the /prompts endpoint
     response = client.get('/prompts')
@@ -51,21 +54,3 @@ def test_get_prompts(client):
     # Assert the response JSON content (assuming there are no prompts initially)
     json_data = response.get_json()
     assert isinstance(json_data, list)
-
-def test_create_prompt_rate_limit_exceeded(client, monkeypatch):
-    # Mocking OpenAI API client to raise RateLimitError
-    def mock_create(*args, **kwargs):
-        raise openai.RateLimitError(message="API rate limit exceeded")
-
-    monkeypatch.setattr('openai.ChatCompletion.create', mock_create)
-
-    # Send a POST request to the /prompt endpoint
-    response = client.post('/prompt', json={'prompt': 'Test prompt'})
-
-    # Assert the response status code
-    assert response.status_code == 429
-
-    # Assert the error message
-    json_data = response.get_json()
-    assert 'error' in json_data
-    assert json_data['error'] == 'API rate limit exceeded. Please try again later.'

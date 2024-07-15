@@ -1,7 +1,7 @@
 import time
 from flask import request, jsonify
-from app import app, db
-from models import PromptResponse
+from app import app
+from app.models import PromptResponse
 import openai
 from openai import OpenAI
 

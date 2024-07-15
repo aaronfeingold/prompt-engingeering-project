@@ -14,6 +14,7 @@ def create_app():
     migrate = Migrate(app, db)
 
     openai_service = OpenAIService(api_key=app.config['OPENAI_API_KEY'])
-    register_routes(app, openai_service)
+    app.openai_service = openai_service
+    register_routes(app)
 
     return app

@@ -1,3 +1,4 @@
+import time
 from flask import request, jsonify
 from app import app, db
 from models import PromptResponse
@@ -5,7 +6,6 @@ import openai
 from openai import OpenAI
 
 client = OpenAI(api_key=app.config['OPENAI_API_KEY'])
-import time
 
 
 @app.route('/prompt', methods=['POST'])
@@ -40,9 +40,10 @@ def create_prompt():
             'created_at': prompt_response.created_at
         }), 201
     except openai.RateLimitError as e:
-        return jsonify({'error': 'API rate limit exceeded. Please try again later.'}), 429
+        return jsonify({'error': f'API rate limit exceeded: {e}. Please try again later.'}), 429
     except Exception as e:
-            return jsonify({'error': 'An error occurred while processing your request.', 'details': error_message}), 500
+        return jsonify({'error': 'An error occurred while processing your request', 'details': e}), 500
+
 
 @app.route('/prompts', methods=['GET'])
 def get_prompts():

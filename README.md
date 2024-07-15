@@ -22,8 +22,8 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
 
 1. **Clone Repository**:
     ```
-    git clone https://github.com/your-username/your-repository.git
-    cd your-repository
+    git clone https://github.com/aaronfeingold/prompt-engingeering-project
+    cd prompt-engingeering-project
     ```
 2. **Set Up Virtual Environment**:
     ```

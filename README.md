@@ -63,9 +63,23 @@ flask db upgrade
 - **POST `/prompt`**: Create a new prompt and generate a response.
 - **GET `/prompts`**: Retrieve all stored prompts and responses.
 
-## Testing
+## Testing/Debugging
 
+**Test Suites**
 - Run tests using `pytest` to ensure functionality and reliability.
+
+**cURL Requests**
+- When using Visual Studio Code Python File Debugger, these examples can used to interrogate endpoints:
+
+```
+curl -X POST http://127.0.0.1:5000/prompt -H "Content-Type: application/json" -d '{"prompt":"Write a short story about a brave knight who saves a village from a dragon."}'
+```
+
+and
+
+```
+curl http://127.0.0.1:5000/prompts -H "Content-Type: application/json"
+```
 
 ## Deployment
 

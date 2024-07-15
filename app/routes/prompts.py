@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, current_app, request, jsonify
 from app.controllers import create_new_prompt_response, get_all_prompt_responses
 import openai
 
@@ -12,7 +12,7 @@ def create_prompt_response():
     if not prompt:
         return jsonify({'error': 'Prompt is required'}), 400
     try:
-        response_data = create_new_prompt_response(app.openai_service, prompt)
+        response_data = create_new_prompt_response(current_app.openai_service, prompt)
 
         return jsonify(response_data), 201
     except openai.RateLimitError as e:

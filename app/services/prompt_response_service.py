@@ -16,7 +16,7 @@ class PromptResponseService:
             role=role,
             response_time=response_time
         )
-        prompt_response.add_to_db()  # Assuming this method adds the object to the DB and commits the session
+        prompt_response.add_to_db()
         return prompt_response.to_dict()
 
     @staticmethod

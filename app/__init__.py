@@ -11,6 +11,7 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
+    # todo: add migrations
     migrate = Migrate(app, db)
 
     openai_service = OpenAIService(api_key=app.config['OPENAI_API_KEY'])

@@ -1,15 +1,17 @@
 from flask import jsonify
 import openai
 from app.services import PromptResponseService
+import json
 
 
 def create_new_prompt_response(request):
-    messages = request.json.get("messages")
-
-    if not messages:
+    prompt_messages = request.json.get("prompt_messages")
+    if not prompt_messages:
         return jsonify({"error": "A Message is required"}), 400
     try:
-        response_data = PromptResponseService.create_new_prompt_response(messages)
+        response_data = PromptResponseService.create_new_prompt_response(
+            prompt_messages
+        )
 
         return jsonify(response_data), 201
     except openai.RateLimitError as e:

@@ -19,7 +19,7 @@ class PromptResponse(db.Model):
     @property
     def prompt_messages(self):
         """Deserialize the JSON string in the prompt column into Python objects."""
-        return json.loads(self.prompt)
+        return json.loads(self.messages)
 
     @prompt_messages.setter
     def prompt_messages(self, messages):
@@ -29,9 +29,8 @@ class PromptResponse(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "prompt": self.prompt_messages,
-            "content": self.content,
-            "role": self.role,
+            "prompt": self.prompt,
+            "messages": self.prompt_messages,
             "response_time": self.response_time,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }

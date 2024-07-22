@@ -24,5 +24,5 @@ class PromptResponseService:
             return [response.to_dict() for response in prompt_responses]
         except Exception as e:
             raise RuntimeError(
-                "Failed to fetch prompt responses from the database."
+                f"Failed to fetch prompt responses from the database: {e}"
             ) from e

@@ -24,7 +24,7 @@ class PromptResponse(db.Model):
     @prompt_messages.setter
     def prompt_messages(self, messages):
         """Serialize the Python objects into a JSON string for storage in the prompt column."""
-        self.prompt = json.dumps(messages)
+        self.messages = json.dumps(messages)
 
     def to_dict(self):
         return {

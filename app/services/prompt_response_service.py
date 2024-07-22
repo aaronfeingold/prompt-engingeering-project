@@ -7,6 +7,29 @@ import json
 class PromptResponseService:
     @staticmethod
     def create_new_prompt_response(prompt_messages):
+        """
+        Generates a new prompt response using the OpenAI API, serializes the input prompt and the generated response,
+        and stores them in the database.
+
+        This method performs the following steps:
+        1. Records the start time for generating a response.
+        2. Calls the OpenAI API to generate a response based on the input prompt_messages.
+        3. Calculates the response time by subtracting the start time from the current time.
+        4. Serializes both the input prompt and the generated response into JSON strings.
+        5. Creates a new PromptResponse object with the serialized data and response time.
+        6. Attempts to add the new PromptResponse object to the database.
+        7. Returns a dictionary representation of the PromptResponse object.
+
+        Parameters:
+        - prompt_messages (list/dict): The input prompt messages to send to the OpenAI API.
+
+        Returns:
+        - dict: A dictionary representation of the created PromptResponse object.
+
+        Raises:
+        - ValueError: If there is an issue creating the PromptResponse object.
+        - RuntimeError: If there is an issue adding the PromptResponse object to the database or fetching its dictionary representation.
+        """
         start_time = time.time()
         response = current_app.openai_service.generate_response(prompt_messages)
         response_time = time.time() - start_time
@@ -38,6 +61,19 @@ class PromptResponseService:
 
     @staticmethod
     def get_all_prompt_responses():
+        """
+        Retrieves all prompt responses from the database and returns them as a list of dictionaries.
+
+        This function performs a query to fetch all instances of PromptResponse from the database.
+        Each PromptResponse object is then converted to a dictionary using its `to_dict` method.
+        The list of these dictionaries is returned to the caller.
+
+        Returns:
+        - list: A list of dictionaries, where each dictionary represents a prompt response.
+
+        Raises:
+        - RuntimeError: If there is an issue fetching the prompt responses from the database.
+        """
         try:
             prompt_responses = PromptResponse.query.all()
             return [response.to_dict() for response in prompt_responses]

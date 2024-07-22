@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.controllers import create_new_prompt_response, get_all_prompt_responses
 
 
-bp = Blueprint("prompts", __name__)
+bp = Blueprint("openai", __name__)
 
 
 @bp.route("/prompt", methods=["POST"])

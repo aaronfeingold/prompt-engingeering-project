@@ -72,13 +72,13 @@ flask db upgrade
 - When using Visual Studio Code Python File Debugger, these examples can used to interrogate endpoints:
 
 ```
-curl -X POST http://127.0.0.1:5000/api/v1/prompt/prompt -H "Content-Type: application/json" -d '{"prompt":"Write a short story about a brave knight who saves a village from a dragon."}'
+curl -X POST http://127.0.0.1:5000/api/v1/openai/prompt -H "Content-Type: application/json" -d '{"prompt":"Write a short story about a brave knight who saves a village from a dragon."}'
 ```
 
 and
 
 ```
-curl http://127.0.0.1:5000/api/v1/prompt/prompts -H "Content-Type: application/json"
+curl http://127.0.0.1:5000/api/v1/openai/prompts -H "Content-Type: application/json"
 ```
 
 ## Deployment

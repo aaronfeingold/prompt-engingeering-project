@@ -10,6 +10,7 @@ class PromptResponse(db.Model):
         db.Integer, db.ForeignKey("conversation.id"), nullable=True
     )
     messages = db.Column(db.Text, nullable=False)
+    responses = db.Column(JSONB, nullable=False)
     prompts = db.Column(JSONB, nullable=False)
     response_time = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

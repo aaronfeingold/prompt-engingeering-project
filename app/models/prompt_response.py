@@ -9,7 +9,7 @@ class PromptResponse(db.Model):
     conversation_id = db.Column(
         db.Integer, db.ForeignKey("conversation.id"), nullable=True
     )
-    messages = db.Column(db.Text, nullable=False)
+    responses = db.Column(JSONB, nullable=False)
     prompts = db.Column(JSONB, nullable=False)
     response_time = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -17,21 +17,11 @@ class PromptResponse(db.Model):
     def __repr__(self):
         return f'<PromptResponse {self.id}>'
 
-    @property
-    def _messages(self):
-        """Deserialize the JSON string in the messages column into Python objects."""
-        return json.loads(self.messages)
-
-    @_messages.setter
-    def _messages(self, messages):
-        """Serialize the Python objects into a JSON string for storage in the messages column."""
-        self.messages = json.dumps(messages)
-
     def to_dict(self):
         return {
             "id": self.id,
             "prompts": self.prompts,
-            "messages": self._messages,
+            "responses": self.responses,
             "response_time": self.response_time,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }

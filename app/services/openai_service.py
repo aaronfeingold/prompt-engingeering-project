@@ -5,7 +5,9 @@ class OpenAIService:
     def __init__(self, api_key):
         self.client = OpenAI(api_key=api_key)
 
-    def generate_response(self, messages, model="gpt-3.5-turbo", max_tokens=500):
+    def generate_chat_completion(
+        self, messages, model="gpt-3.5-turbo", max_tokens=500, n=1
+    ):
         """
         Generate a response from OpenAI API.
 
@@ -22,7 +24,5 @@ class OpenAIService:
                 raise ValueError("The 'content' key must be a non-empty string")
 
         return self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            max_tokens=max_tokens,
+            model=model, messages=messages, max_tokens=max_tokens, n=n
         )

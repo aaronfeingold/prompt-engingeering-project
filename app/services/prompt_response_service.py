@@ -31,14 +31,26 @@ class PromptResponseService:
         - RuntimeError: If there is an issue adding the PromptResponse object to the database or fetching its dictionary representation.
         """
         start_time = time.time()
-        response = current_app.openai_service.generate_response(prompts)
+        chat_completion = current_app.openai_service.generate_chat_completion(prompts)
         response_time = time.time() - start_time
-        content, role = response.choices[0].message.content, response.choices[0].message.role
+        # always set responses to an array even if only 1 choice
+        responses = []
+        if len(chat_completion.choices) == 1:
+            responses = [
+                {
+                    "content": chat_completion.choices[0].message.content,
+                    "role": chat_completion.choices[0].message.role,
+                }
+            ]
+        else:
+            for resp in chat_completion.choices:
+                responses.append(
+                    {"content": resp.message.content, "role": resp.message.role}
+                )
         try:
-            messages_json = json.dumps({"content": content, "role": role})
             prompt_response = PromptResponse(
                 prompts=prompts,
-                messages=messages_json,
+                responses=responses,
                 response_time=response_time,
             )
         except Exception as e:

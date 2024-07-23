@@ -50,7 +50,7 @@ def query_prompt_responses(request):
 
         return (
             jsonify(
-                PromptResponseService.get_all_prompt_responses(
+                PromptResponseService.query_prompt_responses(
                     page, per_page, sort_by, sort_order
                 )
             ),

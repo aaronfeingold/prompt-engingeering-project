@@ -42,7 +42,11 @@ def upgrade():
         offset = 0
         while True:
             results = (
-                conn.execute(select(prompt_response).limit(batch_size).offset(offset))
+                conn.execute(
+                    select(prompt_response.c.id, prompt_response.c.prompt)
+                    .limit(batch_size)
+                    .offset(offset)
+                )
                 .mappings()
                 .fetchall()
             )
@@ -60,17 +64,19 @@ def upgrade():
                     json_prompts = [{"role": "user", "content": row["prompt"]}]
                 updates.append(
                     {
-                        "id": row["id"],
+                        "b_id": row["id"],
                         "prompts": json_prompts,
                     }
                 )
+            if updates:
+                conn.execute(
+                    prompt_response.update()
+                    .where(prompt_response.c.id == bindparam("b_id"))
+                    .values(prompts=bindparam("prompts")),
+                    updates,
+                )
 
-            conn.execute(
-                prompt_response.update()
-                .where(prompt_response.c.id == bindparam["id"])
-                .values(prompts=json_prompts),
-                updates,
-            )
+            offset += batch_size
 
     migrate_prompt_data()
 

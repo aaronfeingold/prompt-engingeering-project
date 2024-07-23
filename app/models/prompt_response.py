@@ -1,6 +1,7 @@
 import json
 from app.database import db
 from datetime import datetime
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 class PromptResponse(db.Model):
@@ -10,6 +11,7 @@ class PromptResponse(db.Model):
     )
     messages = db.Column(db.Text, nullable=False)
     prompt = db.Column(db.Text, nullable=False)
+    prompts = db.Column(JSONB, nullable=False)
     response_time = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

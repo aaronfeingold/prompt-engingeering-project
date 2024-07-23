@@ -1,7 +1,6 @@
 from flask import current_app
 import time
 from app.models import PromptResponse
-import json
 
 
 class PromptResponseService:
@@ -71,7 +70,7 @@ class PromptResponseService:
             ) from e
 
     @staticmethod
-    def get_all_prompt_responses():
+    def query_prompt_responses(page, per_page, sort_by, sort_order):
         """
         Retrieves all prompt responses from the database and returns them as a list of dictionaries.
 
@@ -85,9 +84,28 @@ class PromptResponseService:
         Raises:
         - RuntimeError: If there is an issue fetching the prompt responses from the database.
         """
+
         try:
-            prompt_responses = PromptResponse.query.all()
-            return [response.to_dict() for response in prompt_responses]
+            query = PromptResponse.query
+
+            if sort_order == "asc":
+                query = query.order_by(getattr(PromptResponse, sort_by).asc())
+            else:
+                query = query.order_by(getattr(PromptResponse, sort_by).desc())
+
+            paginated_responses = query.paginate(
+                page=page, per_page=per_page, error_out=False
+            )
+
+            items = [item.to_dict() for item in paginated_responses.items]
+
+            return {
+                "page": paginated_responses.page,
+                "per_page": paginated_responses.per_page,
+                "total_pages": paginated_responses.pages,
+                "total_items": paginated_responses.total,
+                "items": items,
+            }
         except Exception as e:
             raise RuntimeError(
                 f"Failed to fetch prompt responses from the database: {e}"

@@ -78,7 +78,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/openai/prompt -H "Content-Type: applic
 and
 
 ```
-curl http://127.0.0.1:5000/api/v1/openai/prompts -H "Content-Type: application/json"
+curl http://127.0.0.1:5000/api/v1/openai/prompt-responses -H "Content-Type: application/json"
 ```
 
 ## Deployment

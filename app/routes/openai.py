@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.controllers import create_new_prompt_response, get_all_prompt_responses
+from app.controllers import create_new_prompt_response, query_prompt_responses
 
 
 bp = Blueprint("openai", __name__)
@@ -12,4 +12,4 @@ def post_prompt():
 
 @bp.route("/prompt-responses", methods=["GET"])
 def get_prompt_responses():
-    return get_all_prompt_responses()
+    return query_prompt_responses(request)

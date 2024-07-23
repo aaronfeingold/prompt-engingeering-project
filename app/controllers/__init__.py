@@ -1,1 +1,1 @@
-from .prompts import create_new_prompt_response, get_all_prompt_responses
+from .prompts import create_new_prompt_response, query_prompt_responses

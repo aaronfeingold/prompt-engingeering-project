@@ -23,6 +23,6 @@ class OpenAIService:
 
         return self.client.chat.completions.create(
             model=model,
-            messages=formatted_messages,
+            messages=messages,
             max_tokens=max_tokens,
         )

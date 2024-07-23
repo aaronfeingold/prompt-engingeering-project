@@ -1,7 +1,6 @@
 from flask import current_app
 import time
 from app.models import PromptResponse
-import json
 
 
 class PromptResponseService:

@@ -14,19 +14,15 @@ class OpenAIService:
         :param max_tokens: The maximum number of tokens to generate.
         :return: The response from OpenAI API.
         """
-        # Validate and format messages
-        formatted_messages = []
+        # Validate each message in the list for content and role
         for message in messages:
             if "role" not in message or "content" not in message:
                 raise ValueError("Each message must have 'role' and 'content' keys")
             if not isinstance(message["content"], str) or message["content"] == "":
                 raise ValueError("The 'content' key must be a non-empty string")
-            formatted_messages.append(
-                {"role": message["role"], "content": message["content"]}
-            )
 
         return self.client.chat.completions.create(
             model=model,
-            messages=formatted_messages,
+            messages=messages,
             max_tokens=max_tokens,
         )

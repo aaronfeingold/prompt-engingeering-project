@@ -6,14 +6,14 @@ import json
 
 class PromptResponseService:
     @staticmethod
-    def create_new_prompt_response(prompt_messages):
+    def create_new_prompt_response(prompts):
         """
         Generates a new prompt response using the OpenAI API, serializes the input prompt and the generated response,
         and stores them in the database.
 
         This method performs the following steps:
         1. Records the start time for generating a response.
-        2. Calls the OpenAI API to generate a response based on the input prompt_messages.
+        2. Calls the OpenAI API to generate a response based on the input prompts.
         3. Calculates the response time by subtracting the start time from the current time.
         4. Serializes both the input prompt and the generated response into JSON strings.
         5. Creates a new PromptResponse object with the serialized data and response time.
@@ -21,7 +21,7 @@ class PromptResponseService:
         7. Returns a dictionary representation of the PromptResponse object.
 
         Parameters:
-        - prompt_messages (list/dict): The input prompt messages to send to the OpenAI API.
+        - prompts (list/dict): The input prompt messages to send to the OpenAI API.
 
         Returns:
         - dict: A dictionary representation of the created PromptResponse object.
@@ -31,14 +31,13 @@ class PromptResponseService:
         - RuntimeError: If there is an issue adding the PromptResponse object to the database or fetching its dictionary representation.
         """
         start_time = time.time()
-        response = current_app.openai_service.generate_response(prompt_messages)
+        response = current_app.openai_service.generate_response(prompts)
         response_time = time.time() - start_time
         content, role = response.choices[0].message.content, response.choices[0].message.role
         try:
-            prompt_json = json.dumps(prompt_messages)
             messages_json = json.dumps({"content": content, "role": role})
             prompt_response = PromptResponse(
-                prompt=prompt_json,
+                prompts=prompts,
                 messages=messages_json,
                 response_time=response_time,
             )

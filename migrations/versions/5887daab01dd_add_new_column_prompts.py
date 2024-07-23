@@ -8,8 +8,7 @@ Create Date: 2024-07-23 15:02:39.689556
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from app import db
-from app.models import PromptResponse
+from sqlalchemy.sql import table, column, select
 import json
 
 # revision identifiers, used by Alembic.
@@ -28,17 +27,30 @@ def upgrade():
 
     # ### end Alembic commands ###
     # migrate data from 'prompt' to 'prompts'
+    # Use SQLAlchemy's table and column to access and update the data
+    prompt_response = table(
+        "prompt_response",
+        column("id", sa.Integer),
+        column("prompt", sa.String),
+        column("prompts", postgresql.JSONB),
+    )
+    # Bind the connection
+    conn = op.get_bind()
+
     def migrate_prompt_data():
-        all_responses = PromptResponse.query.all()
-        for response in all_responses:
+        results = conn.execute(select(prompt_response)).mappings().fetchall()
+        for row in results:
             try:
                 # try to load the json
-                json_prompts = json.loads(response.prompt)
+                json_prompts = json.loads(row.prompt)
             except json.JSONDecodeError:
                 # if not a json, create a new json object, default to role user
-                json_prompts = [{"role": "user", "content": response.prompt}]
-            response.prompts = json_prompts
-            db.session.commit()
+                json_prompts = [{"role": "user", "content": row.prompt}]
+            conn.execute(
+                prompt_response.update()
+                .where(prompt_response.c.id == row["id"])
+                .values(prompts=json_prompts)
+            )
 
     migrate_prompt_data()
 

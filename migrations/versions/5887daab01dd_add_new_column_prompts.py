@@ -8,7 +8,7 @@ Create Date: 2024-07-23 15:02:39.689556
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.sql import table, column, select
+from sqlalchemy.sql import table, column, select, bindparam
 import json
 
 # revision identifiers, used by Alembic.
@@ -37,19 +37,39 @@ def upgrade():
     # Bind the connection
     conn = op.get_bind()
 
-    def migrate_prompt_data():
-        results = conn.execute(select(prompt_response)).mappings().fetchall()
-        for row in results:
-            try:
-                # try to load the json
-                json_prompts = json.loads(row.prompt)
-            except json.JSONDecodeError:
-                # if not a json, create a new json object, default to role user
-                json_prompts = [{"role": "user", "content": row.prompt}]
+    # use a batch approach to update the data
+    def migrate_prompt_data(batch_size=1000):
+        offset = 0
+        while True:
+            results = (
+                conn.execute(select(prompt_response).limit(batch_size).offset(offset))
+                .mappings()
+                .fetchall()
+            )
+
+            if not results:
+                break
+
+            updates = []
+            for row in results:
+                try:
+                    # try to load the json
+                    json_prompts = json.loads(row["prompt"])
+                except json.JSONDecodeError:
+                    # if not a json, create a new json object, default to role user
+                    json_prompts = [{"role": "user", "content": row["prompt"]}]
+                updates.append(
+                    {
+                        "id": row["id"],
+                        "prompts": json_prompts,
+                    }
+                )
+
             conn.execute(
                 prompt_response.update()
-                .where(prompt_response.c.id == row["id"])
-                .values(prompts=json_prompts)
+                .where(prompt_response.c.id == bindparam["id"])
+                .values(prompts=json_prompts),
+                updates,
             )
 
     migrate_prompt_data()

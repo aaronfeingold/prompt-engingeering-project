@@ -30,7 +30,7 @@ class PromptResponse(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "prompt": self.prompt,
+            "prompts": self.prompts,
             "messages": self._messages,
             "response_time": self.response_time,
             "created_at": self.created_at.isoformat() if self.created_at else None,

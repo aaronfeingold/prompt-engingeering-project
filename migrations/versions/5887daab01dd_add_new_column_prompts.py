@@ -8,6 +8,9 @@ Create Date: 2024-07-23 15:02:39.689556
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+from app import db
+from app.models import PromptResponse
+import json
 
 # revision identifiers, used by Alembic.
 revision = '5887daab01dd'
@@ -22,6 +25,20 @@ def upgrade():
         batch_op.add_column(sa.Column('prompts', postgresql.JSONB(astext_type=sa.Text()), nullable=False))
 
     # ### end Alembic commands ###
+    # migrate data from 'prompt' to 'prompts'
+    def migrate_prompt_data():
+        all_responses = PromptResponse.query.all()
+        for response in all_responses:
+            try:
+                # try to load the json
+                json_prompts = json.loads(response.prompt)
+            except json.JSONDecodeError:
+                # if not a json, create a new json object, default to role user
+                json_prompts = [{"role": "user", "content": response.prompt}]
+            response.prompts = json_prompts
+            db.session.commit()
+
+    migrate_prompt_data()
 
 
 def downgrade():

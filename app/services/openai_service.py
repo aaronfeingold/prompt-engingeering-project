@@ -14,7 +14,7 @@ class OpenAIService:
         :param max_tokens: The maximum number of tokens to generate.
         :return: The response from OpenAI API.
         """
-        # Validate and format messages
+        # Validate
         formatted_messages = []
         for message in messages:
             if "role" not in message or "content" not in message:

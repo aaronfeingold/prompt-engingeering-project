@@ -35,6 +35,8 @@ class PromptResponseService:
         chat_completion = current_app.openai_service.generate_chat_completion(prompts)
         response_time = time.time() - start_time
         # always set responses to an array even if only 1 choice
+        # destructure the object since there are other things in the
+        # response which are not needed at this time
         responses = []
         if len(chat_completion.choices) == 1:
             responses = [
@@ -48,6 +50,7 @@ class PromptResponseService:
                 responses.append(
                     {"content": resp.message.content, "role": resp.message.role}
                 )
+
         try:
             prompt_response = PromptResponse(
                 prompts=prompts,
@@ -60,7 +63,6 @@ class PromptResponseService:
                 f"Failed to add prompt response to the database: {e}"
             ) from e
 
-        # Store usage data
         try:
             usage_entry = OpenAIUsage(
                 prompt_response_id=prompt_response.id,

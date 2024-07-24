@@ -12,9 +12,9 @@ def create_app():
 
     db.init_app(app)
     # todo: add migrations
-    migrate = Migrate(app, db)
+    Migrate(app, db)
 
-    openai_service = OpenAIService(api_key=app.config['OPENAI_API_KEY'])
+    openai_service = OpenAIService(api_key=app.config["OPENAI_API_KEY"])
     app.openai_service = openai_service
     register_routes(app)
 

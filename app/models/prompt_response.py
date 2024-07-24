@@ -14,7 +14,7 @@ class PromptResponse(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<PromptResponse {self.id}>'
+        return f"<PromptResponse {self.id}>"
 
     def to_dict(self):
         return {

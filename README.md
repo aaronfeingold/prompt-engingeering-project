@@ -53,6 +53,31 @@ flask db migrate -m "Initial migration"
 ```
 flask db upgrade
 ```
+## Poetry Setup
+
+1. **Install Poetry**:
+    ```sh
+    curl -sSL https://install.python-poetry.org | python3 -
+    ```
+2. **Install Dependencies with Poetry**:
+    ```sh
+    poetry install
+    ```
+
+## Development
+
+### Pre-commit Hooks
+
+This project uses pre-commit hooks to ensure code quality. The hooks run `black` and `flake8`.
+
+1. **Install pre-commit**:
+    ```sh
+    poetry run pre-commit install
+    ```
+2. **Run pre-commit hooks manually**:
+    ```sh
+    poetry run pre-commit run --all-files
+
 ## Usage
 
 - Create prompts using POST requests to `/prompt`.

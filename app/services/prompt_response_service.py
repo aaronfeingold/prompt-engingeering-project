@@ -1,6 +1,6 @@
 from flask import current_app
 import time
-from app.models import PromptResponse
+from app.models import PromptResponse, OpenAIUsage
 
 
 class PromptResponseService:
@@ -54,15 +54,23 @@ class PromptResponseService:
                 responses=responses,
                 response_time=response_time,
             )
-        except Exception as e:
-            raise ValueError(f"Failed to create prompt response: {e}") from e
-
-        try:
             prompt_response.add_to_db()
         except Exception as e:
             raise RuntimeError(
                 f"Failed to add prompt response to the database: {e}"
             ) from e
+
+        # Store usage data
+        try:
+            usage_entry = OpenAIUsage(
+                prompt_response_id=prompt_response.id,
+                completion_tokens=chat_completion["completion_tokens"],
+                prompt_tokens=chat_completion["prompt_tokens"],
+                total_tokens=chat_completion["total_tokens"],
+            )
+            usage_entry.add_to_db()
+        except Exception as e:
+            raise RuntimeError(f"Failed to add usage data to the database: {e}")
 
         try:
             return prompt_response.to_dict()

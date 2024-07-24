@@ -1,13 +1,14 @@
 from flask import current_app
 import time
-from app.models import PromptResponse
+from app.models import PromptResponse, OpenAIUsage
 
 
 class PromptResponseService:
     @staticmethod
     def create_new_prompt_response(prompts):
         """
-        Generates a new prompt response using the OpenAI API, serializes the input prompt and the generated response,
+        Generates a new prompt response using the OpenAI API,
+        serializes the input prompt and the generated response,
         and stores them in the database.
 
         This method performs the following steps:
@@ -27,12 +28,15 @@ class PromptResponseService:
 
         Raises:
         - ValueError: If there is an issue creating the PromptResponse object.
-        - RuntimeError: If there is an issue adding the PromptResponse object to the database or fetching its dictionary representation.
+        - RuntimeError: If there is an issue adding the PromptResponse object to the database
+          or fetching its dictionary representation.
         """
         start_time = time.time()
         chat_completion = current_app.openai_service.generate_chat_completion(prompts)
         response_time = time.time() - start_time
         # always set responses to an array even if only 1 choice
+        # destructure the object since there are other things in the
+        # response which are not needed at this time
         responses = []
         if len(chat_completion.choices) == 1:
             responses = [
@@ -46,21 +50,29 @@ class PromptResponseService:
                 responses.append(
                     {"content": resp.message.content, "role": resp.message.role}
                 )
+
         try:
             prompt_response = PromptResponse(
                 prompts=prompts,
                 responses=responses,
                 response_time=response_time,
             )
-        except Exception as e:
-            raise ValueError(f"Failed to create prompt response: {e}") from e
-
-        try:
             prompt_response.add_to_db()
         except Exception as e:
             raise RuntimeError(
                 f"Failed to add prompt response to the database: {e}"
             ) from e
+
+        try:
+            usage_entry = OpenAIUsage(
+                prompt_response_id=prompt_response.id,
+                completion_tokens=chat_completion.usage.completion_tokens,
+                prompt_tokens=chat_completion.usage.prompt_tokens,
+                total_tokens=chat_completion.usage.total_tokens,
+            )
+            usage_entry.add_to_db()
+        except Exception as e:
+            raise RuntimeError(f"Failed to add usage data to the database: {e}")
 
         try:
             return prompt_response.to_dict()

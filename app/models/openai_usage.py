@@ -3,10 +3,10 @@ from datetime import datetime
 
 
 class OpenAIUsage(db.Model):
-    __tablename__ = "usage_data"
+    __tablename__ = "openai_usage"
     id = db.Column(db.Integer, primary_key=True)
     prompt_response_id = db.Column(
-        db.Integer, db.ForeignKey("prompt_responses.id"), nullable=False
+        db.Integer, db.ForeignKey("prompt_response.id"), nullable=False
     )
     completion_tokens = db.Column(db.Integer, nullable=False)
     prompt_tokens = db.Column(db.Integer, nullable=False)

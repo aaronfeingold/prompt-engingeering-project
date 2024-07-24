@@ -31,4 +31,4 @@ class PromptResponse(db.Model):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            raise RuntimeError(f"Insertion to the database failed: {e}")
+            raise RuntimeError(f"Insertion to the PromptResponse table failed: {e}")

@@ -66,9 +66,9 @@ class PromptResponseService:
         try:
             usage_entry = OpenAIUsage(
                 prompt_response_id=prompt_response.id,
-                completion_tokens=chat_completion["completion_tokens"],
-                prompt_tokens=chat_completion["prompt_tokens"],
-                total_tokens=chat_completion["total_tokens"],
+                completion_tokens=chat_completion.usage.completion_tokens,
+                prompt_tokens=chat_completion.usage.prompt_tokens,
+                total_tokens=chat_completion.usage.total_tokens,
             )
             usage_entry.add_to_db()
         except Exception as e:

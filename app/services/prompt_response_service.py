@@ -7,7 +7,8 @@ class PromptResponseService:
     @staticmethod
     def create_new_prompt_response(prompts):
         """
-        Generates a new prompt response using the OpenAI API, serializes the input prompt and the generated response,
+        Generates a new prompt response using the OpenAI API,
+        serializes the input prompt and the generated response,
         and stores them in the database.
 
         This method performs the following steps:
@@ -27,7 +28,8 @@ class PromptResponseService:
 
         Raises:
         - ValueError: If there is an issue creating the PromptResponse object.
-        - RuntimeError: If there is an issue adding the PromptResponse object to the database or fetching its dictionary representation.
+        - RuntimeError: If there is an issue adding the PromptResponse object to the database
+          or fetching its dictionary representation.
         """
         start_time = time.time()
         chat_completion = current_app.openai_service.generate_chat_completion(prompts)

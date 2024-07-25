@@ -1,6 +1,7 @@
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from app.database import db
+import re
 
 bcrypt = Bcrypt()
 
@@ -30,3 +31,11 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+    @staticmethod
+    def validate_username(username):
+        if not re.match("^[a-zA-Z0-9]+$", username):
+            return False
+        if username.endswith("_"):
+            return False
+        return True

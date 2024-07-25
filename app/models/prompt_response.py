@@ -10,6 +10,8 @@ class PromptResponse(db.Model):
     )
     responses = db.Column(JSONB, nullable=False)
     prompts = db.Column(JSONB, nullable=False)
+    usages = db.relationship("OpenAIUsage", back_populates="prompt_response")
+    user = db.relationship("User", back_populates="prompt_responses")
     response_time = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

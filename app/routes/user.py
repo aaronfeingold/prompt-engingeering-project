@@ -24,6 +24,7 @@ def register():
 @user_bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
+    # users login with email and password
     email = data.get("email")
     password = data.get("password")
     user = User.query.filter_by(email=email).first()

@@ -55,3 +55,6 @@ class User(db.Model):
     @staticmethod
     def validate_password(password):
         return 8 <= len(password) <= 20
+
+    def is_on_team(self, team_id):
+        return any(team.id == team_id for team in self.teams)

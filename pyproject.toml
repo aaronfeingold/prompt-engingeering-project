@@ -15,6 +15,7 @@ SQLAlchemy = "^2.0.31"
 Flask = "^3.0.3"
 psycopg2-binary = "^2.9.9"
 flask-sqlalchemy = "^3.1.1"
+flask-bcrypt = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.1.0"

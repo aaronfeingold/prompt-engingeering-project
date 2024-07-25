@@ -23,7 +23,7 @@ def create_new_prompt_response(request):
         if not team:
             return jsonify({"error": "Team not found"}), 404
         response_data = PromptResponseService.create_new_prompt_response(
-            prompt_messages
+            prompt_messages, user, team
         )
 
         return jsonify(response_data), 201

@@ -5,31 +5,33 @@ from app.models import PromptResponse, OpenAIUsage
 
 class PromptResponseService:
     @staticmethod
-    def create_new_prompt_response(prompts):
+    def create_new_prompt_response(prompts, user, team):
         """
         Generates a new prompt response using the OpenAI API,
         serializes the input prompt and the generated response,
-        and stores them in the database.
+        and stores them in the database along with usage data.
 
         This method performs the following steps:
         1. Records the start time for generating a response.
         2. Calls the OpenAI API to generate a response based on the input prompts.
         3. Calculates the response time by subtracting the start time from the current time.
         4. Serializes both the input prompt and the generated response into JSON strings.
-        5. Creates a new PromptResponse object with the serialized data and response time.
+        5. Creates a new PromptResponse object with the serialized data, response time, user, and team.
         6. Attempts to add the new PromptResponse object to the database.
-        7. Returns a dictionary representation of the PromptResponse object.
+        7. Creates a new OpenAIUsage object with the usage data, user, and team.
+        8. Attempts to add the new OpenAIUsage object to the database.
+        9. Returns a dictionary representation of the PromptResponse object.
 
         Parameters:
         - prompts (list/dict): The input prompt messages to send to the OpenAI API.
+        - user (User): The user associated with the prompt response.
+        - team (Team): The team associated with the prompt response.
 
         Returns:
         - dict: A dictionary representation of the created PromptResponse object.
 
         Raises:
-        - ValueError: If there is an issue creating the PromptResponse object.
-        - RuntimeError: If there is an issue adding the PromptResponse object to the database
-          or fetching its dictionary representation.
+        - RuntimeError: If there is an issue creating the PromptResponse or OpenAIUsage objects.
         """
         start_time = time.time()
         chat_completion = current_app.openai_service.generate_chat_completion(prompts)
@@ -56,6 +58,8 @@ class PromptResponseService:
                 prompts=prompts,
                 responses=responses,
                 response_time=response_time,
+                user=user,
+                team=team,
             )
             prompt_response.add_to_db()
         except Exception as e:
@@ -69,6 +73,8 @@ class PromptResponseService:
                 completion_tokens=chat_completion.usage.completion_tokens,
                 prompt_tokens=chat_completion.usage.prompt_tokens,
                 total_tokens=chat_completion.usage.total_tokens,
+                user=user,
+                team=team,
             )
             usage_entry.add_to_db()
         except Exception as e:

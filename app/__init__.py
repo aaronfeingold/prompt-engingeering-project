@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 from config import Config
 from app.database import db
 from app.services import OpenAIService
@@ -13,6 +14,8 @@ def create_app():
     db.init_app(app)
     # todo: add migrations
     Migrate(app, db)
+    # JWT Manager
+    JWTManager(app)
 
     openai_service = OpenAIService(api_key=app.config["OPENAI_API_KEY"])
     app.openai_service = openai_service

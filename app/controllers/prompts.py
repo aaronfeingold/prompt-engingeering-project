@@ -1,15 +1,29 @@
 from flask import jsonify
+from flask_jwt_extended import get_jwt_identity, jwt_required
 import openai
 from app.services import PromptResponseService
+from app.models import User, Team
 
 
+@jwt_required()
 def create_new_prompt_response(request):
     prompt_messages = request.json.get("prompt_messages")
+    team_id = request.json.get("team_id")
     if not prompt_messages:
         return jsonify({"error": "A Message is required"}), 400
     try:
+        # Extract user information from the JWT token
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Get team information
+        team = Team.query.get(team_id)
+        if not team:
+            return jsonify({"error": "Team not found"}), 404
         response_data = PromptResponseService.create_new_prompt_response(
-            prompt_messages
+            prompt_messages, user, team
         )
 
         return jsonify(response_data), 201

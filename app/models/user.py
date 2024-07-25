@@ -27,6 +27,8 @@ class User(db.Model):
     leading_teams = db.relationship(
         "Team", secondary="team_leaders", back_populates="leaders"
     )
+    usages = db.relationship("OpenAIUsage", back_populates="user")
+    prompt_responses = db.relationship("PromptResponse", back_populates="user")
     regular_budget = db.Column(db.Integer, default=0)
     team_budgeted = db.Column(db.Boolean, default=False)
     temporary_budget = db.Column(db.Integer, default=0)

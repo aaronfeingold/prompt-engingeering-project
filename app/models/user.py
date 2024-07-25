@@ -27,6 +27,8 @@ class User(db.Model):
     )
 
     def set_password(self, password):
+        if not self.validate_password(password):
+            raise ValueError("Password must be between 8-20 characters.")
         self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
     def check_password(self, password):
@@ -37,3 +39,7 @@ class User(db.Model):
         if re.match("^[a-zA-Z0-9]+[^_]$", username):
             return True
         return False
+
+    @staticmethod
+    def validate_password(password):
+        return 8 <= len(password) <= 20

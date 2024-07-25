@@ -11,7 +11,9 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    two_fa_setup = db.Column(db.Boolean, default=False)
+    two_fa_setup = db.Column(db.Boolean, default=False)  # has the user set up 2FA?
+    two_fa_secret = db.Column(db.String(32), nullable=True)  # Secret key for 2FA
+    two_fa_backup_codes = db.Column(db.ARRAY(db.String), nullable=True)  # Backup codes
     roles = db.Column(db.ARRAY(db.Integer), nullable=False)
     teams = db.Column(db.ARRAY(db.Integer), nullable=True)
     regular_budget = db.Column(db.Integer, default=0)

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from app.models import db, User
+from app.models import User
+from app.database import db
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required
 
@@ -13,8 +14,8 @@ def register():
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
-    roles = data.get("roles", [1])  # Default to regular user role
-    user = User(username=username, email=email, roles=roles)
+    role = data.get("roles", "user")  # Default to regular user role
+    user = User(username=username, email=email, roles=role)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()

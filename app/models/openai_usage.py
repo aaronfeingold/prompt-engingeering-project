@@ -8,7 +8,9 @@ class OpenAIUsage(db.Model):
     prompt_response_id = db.Column(
         db.Integer, db.ForeignKey("prompt_response.id"), nullable=False
     )
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), nullable=True
+    )  # temporarily nullable
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=True)
     completion_tokens = db.Column(db.Integer, nullable=False)
     prompt_tokens = db.Column(db.Integer, nullable=False)

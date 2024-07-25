@@ -83,8 +83,6 @@ def upgrade():
     with op.batch_alter_table("openai_usage", schema=None) as batch_op:
         batch_op.add_column(sa.Column("user_id", sa.Integer(), nullable=True))
         batch_op.add_column(sa.Column("team_id", sa.Integer(), nullable=True))
-        batch_op.execute("UPDATE openai_usage SET user_id = 1 WHERE user_id IS NULL")
-        batch_op.alter_column("user_id", existing_type=sa.Integer(), nullable=False)
         batch_op.create_foreign_key(None, "teams", ["team_id"], ["id"])
         batch_op.create_foreign_key(None, "users", ["user_id"], ["id"])
 

@@ -34,8 +34,6 @@ class User(db.Model):
 
     @staticmethod
     def validate_username(username):
-        if not re.match("^[a-zA-Z0-9]+$", username):
-            return False
-        if username.endswith("_"):
-            return False
-        return True
+        if re.match("^[a-zA-Z0-9]+[^_]$", username):
+            return True
+        return False

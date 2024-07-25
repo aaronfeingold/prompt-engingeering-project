@@ -2,8 +2,15 @@ from flask_bcrypt import Bcrypt
 from datetime import datetime
 from app.database import db
 import re
+from enum import Enum
 
 bcrypt = Bcrypt()
+
+
+class RoleEnum(Enum):
+    USER = 1
+    ADMIN = 2
+    SUPER_ADMIN = 3
 
 
 class User(db.Model):
@@ -15,8 +22,11 @@ class User(db.Model):
     two_fa_setup = db.Column(db.Boolean, default=False)  # has the user set up 2FA?
     two_fa_secret = db.Column(db.String(32), nullable=True)  # Secret key for 2FA
     two_fa_backup_codes = db.Column(db.ARRAY(db.String), nullable=True)  # Backup codes
-    roles = db.Column(db.ARRAY(db.Integer), nullable=False)
-    teams = db.Column(db.ARRAY(db.Integer), nullable=True)
+    role = db.Column(db.Enum(RoleEnum), nullable=False)
+    teams = db.relationship("Team", secondary="teammates", back_populates="teammates")
+    leading_teams = db.relationship(
+        "Team", secondary="team_leaders", back_populates="leaders"
+    )
     regular_budget = db.Column(db.Integer, default=0)
     team_budgeted = db.Column(db.Boolean, default=False)
     temporary_budget = db.Column(db.Integer, default=0)

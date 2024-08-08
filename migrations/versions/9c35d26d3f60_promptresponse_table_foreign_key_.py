@@ -7,6 +7,7 @@ Create Date: 2024-08-07 18:07:01.893559
 """
 
 import sqlalchemy as sa
+from sqlalchemy.sql import text
 from alembic import op
 from flask_bcrypt import Bcrypt
 
@@ -32,7 +33,8 @@ def upgrade():
     password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
     op.execute(
-        """
+        text(
+            """
         DO $$
         BEGIN
             IF NOT EXISTS (SELECT 1 FROM users WHERE id = 1) THEN
@@ -41,8 +43,8 @@ def upgrade():
             END IF;
         END
         $$;
-        """,
-        {"password_hash": password_hash},
+        """
+        ).bindparams(password_hash=password_hash)
     )
 
     # Step 3: Populate user_id column with the default user's ID where it is null

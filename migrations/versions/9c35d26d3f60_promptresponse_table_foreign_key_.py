@@ -32,16 +32,17 @@ def upgrade():
     password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
     op.execute(
-        f"""
+        """
         DO $$
         BEGIN
             IF NOT EXISTS (SELECT 1 FROM users WHERE id = 1) THEN
                 INSERT INTO users (id, username, email, password_hash, role, regular_budget, date_created)
-                VALUES (1, 'default_user', 'default@example.com', {password_hash}, 1, 150, NOW());
+                VALUES (1, 'default_user', 'default@example.com', :password_hash, 1, 150, NOW());
             END IF;
         END
         $$;
-        """
+        """,
+        {"password_hash": password_hash},
     )
 
     # Step 3: Populate user_id column with the default user's ID where it is null

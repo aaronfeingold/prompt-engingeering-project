@@ -6,8 +6,8 @@ Create Date: 2024-08-07 18:07:01.893559
 
 """
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()

@@ -8,6 +8,9 @@ Create Date: 2024-08-07 18:07:01.893559
 
 from alembic import op
 import sqlalchemy as sa
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 
 # revision identifiers, used by Alembic.
@@ -24,13 +27,17 @@ def upgrade():
 
     # Step 2: Create a default user with information for each column
 
+    # Generate a password hash
+    password = "default_password"
+    password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+
     op.execute(
-        """
+        f"""
         DO $$
         BEGIN
             IF NOT EXISTS (SELECT 1 FROM users WHERE id = 1) THEN
-                INSERT INTO users (id, username, email, date_created)
-                VALUES (1, 'default_user', 'default@example.com', NOW());
+                INSERT INTO users (id, username, email, password_hash, role, regular_budget, date_created)
+                VALUES (1, 'default_user', 'default@example.com', {password_hash}, 1, 150, NOW());
             END IF;
         END
         $$;

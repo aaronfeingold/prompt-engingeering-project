@@ -10,6 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.sql import text
 from alembic import op
 from flask_bcrypt import Bcrypt
+from app.models.user import RoleEnum
 
 bcrypt = Bcrypt()
 
@@ -39,12 +40,12 @@ def upgrade():
         BEGIN
             IF NOT EXISTS (SELECT 1 FROM users WHERE id = 1) THEN
                 INSERT INTO users (id, username, email, password_hash, role, regular_budget, date_created)
-                VALUES (1, 'default_user', 'default@example.com', :password_hash, 1, 150, NOW());
+                VALUES (1, 'default_user', 'default@example.com', :password_hash, :role, 150, NOW());
             END IF;
         END
         $$;
         """
-        ).bindparams(password_hash=password_hash)
+        ).bindparams(password_hash=password_hash, role=RoleEnum.USER.name)
     )
 
     # Step 3: Populate user_id column with the default user's ID where it is null

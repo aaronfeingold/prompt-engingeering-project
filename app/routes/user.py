@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.models import User
+from app.models.user import RoleEnum
 from app.database import db
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required
@@ -20,7 +21,7 @@ def register():
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
-    role = data.get("roles", "user")  # Default to regular user role
+    role = data.get("role", RoleEnum.USER.name)  # Default to regular user role
     # TODO: handle two-factor authentication setup
     # TODO: handle OAuth registration
 
@@ -39,7 +40,7 @@ def register():
 
     try:
         # Create new user
-        user = User(username=username, email=email, roles=role)
+        user = User(username=username, email=email, role=role)
         user.set_password(password)
         # Only set regular_budget if provided, will default to 150.00 otherwise
         if "regular_budget" in data:
@@ -47,9 +48,9 @@ def register():
         db.session.add(user)
         db.session.commit()
         return jsonify({"message": "User registered successfully"}), 201
-    except IntegrityError:
+    except IntegrityError as e:
         db.session.rollback()
-        return jsonify({"error": "Database integrity error"}), 500
+        return jsonify({"error": f"Database integrity error: {e}"}), 500
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500

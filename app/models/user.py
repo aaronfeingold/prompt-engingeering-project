@@ -25,7 +25,7 @@ class User(db.Model):
     role = db.Column(db.Enum(RoleEnum), nullable=False)
     teams = db.relationship("Team", secondary="teammates", back_populates="teammates")
     leading_teams = db.relationship(
-        "Team", secondary="team_leaders", back_populates="leaders"
+        "Team", secondary="team_leaders", back_populates="team_leaders"
     )
     usages = db.relationship("OpenAIUsage", back_populates="user")
     prompt_responses = db.relationship("PromptResponse", back_populates="user")

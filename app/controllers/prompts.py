@@ -47,6 +47,13 @@ def create_new_prompt_response(request):
 
 
 def query_prompt_responses(request):
+    user_identity = get_jwt_identity()
+    # if there is a list of users in the request, use that instead
+    # but first check if the user is an admin or a team leader
+    # if team leader, only allow them to query their team's responses
+    user_list = request.args.getlist("users")
+    if user_list:
+        user_identity = user_list
     try:
         # parse the args from the request
         page = int(request.args.get("page", 1))
@@ -65,7 +72,7 @@ def query_prompt_responses(request):
         return (
             jsonify(
                 PromptResponseService.query_prompt_responses(
-                    page, per_page, sort_by, sort_order
+                    page, per_page, sort_by, sort_order, users=user_identity
                 )
             ),
             200,

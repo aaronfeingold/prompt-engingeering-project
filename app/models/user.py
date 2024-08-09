@@ -29,9 +29,9 @@ class User(db.Model):
     )
     usages = db.relationship("OpenAIUsage", back_populates="user")
     prompt_responses = db.relationship("PromptResponse", back_populates="user")
-    regular_budget = db.Column(db.Integer, default=150)
+    regular_budget = db.Column(db.Float, default=150.00, nullable=False)
     team_budgeted = db.Column(db.Boolean, default=False)
-    temporary_budget = db.Column(db.Integer, default=0)
+    temporary_budget = db.Column(db.Float, default=0)
     temporary_budget_expiration = db.Column(db.DateTime, nullable=True)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     last_updated = db.Column(

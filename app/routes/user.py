@@ -21,6 +21,8 @@ def register():
     email = data.get("email")
     password = data.get("password")
     role = data.get("roles", "user")  # Default to regular user role
+    # TODO: handle two-factor authentication setup
+    # TODO: handle OAuth registration
 
     if not username or not email or not password:
         return jsonify({"error": "Username, email, and password are required"}), 400
@@ -39,6 +41,9 @@ def register():
         # Create new user
         user = User(username=username, email=email, roles=role)
         user.set_password(password)
+        # Only set regular_budget if provided, will default to 150.00 otherwise
+        if "regular_budget" in data:
+            user.regular_budget = data["regular_budget"]
         db.session.add(user)
         db.session.commit()
         return jsonify({"message": "User registered successfully"}), 201

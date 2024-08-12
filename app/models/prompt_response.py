@@ -7,6 +7,7 @@ class PromptResponse(db.Model):
     __tablename__ = "prompt_response"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
     conversation_id = db.Column(
         db.Integer, db.ForeignKey("conversation.id"), nullable=True
     )

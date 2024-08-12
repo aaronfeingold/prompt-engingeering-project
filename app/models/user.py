@@ -1,10 +1,8 @@
-from flask_bcrypt import Bcrypt
 from datetime import datetime
 from app.database import db
+from app.extensions import bcrypt
 import re
 from enum import Enum
-
-bcrypt = Bcrypt()
 
 
 class RoleEnum(Enum):

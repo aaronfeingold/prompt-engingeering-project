@@ -88,7 +88,7 @@ class PromptResponseService:
             ) from e
 
     @staticmethod
-    def query_prompt_responses(page, per_page, sort_by, sort_order):
+    def query_prompt_responses(page, per_page, sort_by, sort_order, users=None):
         """
         Retrieves all prompt responses from the database and returns them as a list of dictionaries.
 

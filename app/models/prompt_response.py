@@ -7,6 +7,7 @@ class PromptResponse(db.Model):
     __tablename__ = "prompt_response"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
     conversation_id = db.Column(
         db.Integer, db.ForeignKey("conversation.id"), nullable=True
     )
@@ -14,6 +15,7 @@ class PromptResponse(db.Model):
     prompts = db.Column(JSONB, nullable=False)
     usages = db.relationship("OpenAIUsage", back_populates="prompt_response")
     user = db.relationship("User", back_populates="prompt_responses")
+    team = db.relationship("Team", back_populates="prompt_responses")
     response_time = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

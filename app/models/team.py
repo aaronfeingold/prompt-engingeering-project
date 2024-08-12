@@ -23,6 +23,7 @@ class Team(db.Model):
         "User", secondary=team_leaders, back_populates="leading_teams"
     )
     usages = db.relationship("OpenAIUsage", back_populates="team")
+    prompt_responses = db.relationship("PromptResponse", back_populates="team")
     team_size = db.Column(db.Integer, default=0)
     regular_budget = db.Column(db.Integer, default=0)
     temporary_budget = db.Column(db.Integer, default=0)

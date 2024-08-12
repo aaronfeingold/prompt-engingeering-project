@@ -10,7 +10,7 @@ def role_required(required_roles):
         def decorated_function(*args, **kwargs):
             user_id = get_jwt_identity()
             user = User.query.get(user_id)
-            if not any(role in user.roles for role in required_roles):
+            if not any(role in user.role for role in required_roles):
                 return (
                     jsonify({"message": "Access forbidden: insufficient permissions"}),
                     403,

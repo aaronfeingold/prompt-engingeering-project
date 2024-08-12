@@ -9,13 +9,13 @@ openai_bp = Blueprint("openai", __name__)
 
 @openai_bp.route("/prompt", methods=["POST"])
 @jwt_required()
-@role_required([RoleEnum.USER.name, RoleEnum.ADMIN.name])
+@role_required([RoleEnum.USER, RoleEnum.ADMIN])
 def post_prompt():
     return create_new_prompt_response(request)
 
 
 @openai_bp.route("/prompt-responses", methods=["GET"])
 @jwt_required()
-@role_required(["admin", "user"])
+@role_required([RoleEnum.USER, RoleEnum.ADMIN])
 def get_prompt_responses():
     return query_prompt_responses(request)

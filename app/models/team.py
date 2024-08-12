@@ -17,6 +17,7 @@ team_leaders = db.Table(
 class Team(db.Model):
     __tablename__ = "teams"
     id = db.Column(db.Integer, primary_key=True)
+    team_name = db.Column(db.String(80), unique=True, nullable=False)
     teammates = db.relationship("User", secondary=teammates, back_populates="teams")
     team_leaders = db.relationship(
         "User", secondary=team_leaders, back_populates="leading_teams"
@@ -27,3 +28,7 @@ class Team(db.Model):
     temporary_budget = db.Column(db.Integer, default=0)
     temporary_budget_expiration = db.Column(db.DateTime, nullable=True)
     team_size_limit = db.Column(db.Integer, default=10)
+
+    @property
+    def number_of_teammates(self):
+        return len(self.teammates)

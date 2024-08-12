@@ -1,10 +1,13 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
 from config import Config
 from app.database import db
 from app.services import OpenAIService
 from app.routes import register_routes
+
+bcrypt = Bcrypt()
 
 
 def create_app():
@@ -14,6 +17,8 @@ def create_app():
     db.init_app(app)
     # todo: add migrations
     Migrate(app, db)
+    # Bcrypt passwords for now
+    bcrypt.init_app(app)
     # JWT Manager
     JWTManager(app)
 

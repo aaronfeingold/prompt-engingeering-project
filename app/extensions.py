@@ -1,3 +1,3 @@
 from flask_bcrypt import Bcrypt
 
-brypt = Bcrypt()
+bcrypt = Bcrypt()

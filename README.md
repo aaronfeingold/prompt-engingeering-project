@@ -9,14 +9,14 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
 - Generate AI-driven responses based on user prompts.
 - Store prompt-response pairs along with metadata (response time, creation date).
 - RESTful API endpoints for creating prompts and retrieving responses.
+- OpenAI Usage Analysis
+- User Budgeting Controls
 
 ## Tech Notes
-
-- Flask
-- Flask-Migrate
-- SQLAlchemy
+- Flask App
 - OpenAI API
 - Poetry
+- PostgreSQL
 
 ## Setup Instructions
 
@@ -53,30 +53,14 @@ flask db migrate -m "Initial migration"
 flask db upgrade
 ```
 
-## Development
 
-### Pre-commit Hooks
+## API v1 Reference
 
-This project uses pre-commit hooks to ensure code quality. The hooks run `black` and `flake8`.
+### /opani
+- **POST `/prompt`**: Create a new prompt and generate a response.
+- **GET `/prompt-responses`**: Retrieve all stored prompts and responses
 
-1. **Install pre-commit**:
-    ```sh
-    poetry run pre-commit install
-    ```
-2. **Run pre-commit hooks manually**:
-    ```sh
-    poetry run pre-commit run --all-files
-
-## Usage
-
-
-
-## Testing/Debugging
-
-**Test Suites**
-- Run tests using `pytest` to ensure functionality and reliability.
-
-**cURL Requests**
+**cURL Request Examples**
 - When using Visual Studio Code Python File Debugger, these examples can used to interrogate endpoints:
 
 ```
@@ -91,7 +75,7 @@ curl http://127.0.0.1:5000/api/v1/openai/prompt-responses -H "Content-Type: appl
 
 ## Deployment
 
-- Deploy the Flask API project to a production environment using standard Flask deployment practices.
+**TDB**
 
 ## Contributing
 

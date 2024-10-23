@@ -20,6 +20,10 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
 
 ## Setup Instructions
 
+### Prequisites
+- Postgres > 13.3.x
+- Poetry
+
 1. **Clone Repository**:
     ```
     git clone https://github.com/aaronfeingold/prompt-engingeering-project
@@ -56,22 +60,14 @@ flask db upgrade
 
 ## API v1 Reference
 
-### /opani
+### /openai
 - **POST `/prompt`**: Create a new prompt and generate a response.
 - **GET `/prompt-responses`**: Retrieve all stored prompts and responses
-
-**cURL Request Examples**
-- When using Visual Studio Code Python File Debugger, these examples can used to interrogate endpoints:
-
-```
-curl -X POST http://127.0.0.1:5000/api/v1/openai/prompt -H "Content-Type: application/json" -d '{"prompt_messages": [{"role": "user", "content": "Write a short story about a brave knight who saves a village from a dragon."}]}'
-```
-
-and
-
-```
-curl http://127.0.0.1:5000/api/v1/openai/prompt-responses -H "Content-Type: application/json"
-```
+### /user
+- **POST `/register`**: Initialize a new user on a team
+- **POST `/login`**
+### /team
+- **POST `/register`**: Initialize a new team
 
 ## Deployment
 

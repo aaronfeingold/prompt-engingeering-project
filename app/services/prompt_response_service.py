@@ -5,7 +5,7 @@ from app.models import PromptResponse, OpenAIUsage
 
 class PromptResponseService:
     @staticmethod
-    def create_new_prompt_response(prompts, user, team):
+    def create_new_prompt_response(prompt_messages, user, team, model, max_tokens):
         """
         Generates a new prompt response using the OpenAI API,
         serializes the input prompt and the generated response,
@@ -23,7 +23,7 @@ class PromptResponseService:
         9. Returns a dictionary representation of the PromptResponse object.
 
         Parameters:
-        - prompts (list/dict): The input prompt messages to send to the OpenAI API.
+        - prompt_messages (list/dict): The input prompt messages to send to the OpenAI API.
         - user (User): The user associated with the prompt response.
         - team (Team): The team associated with the prompt response.
 
@@ -34,7 +34,9 @@ class PromptResponseService:
         - RuntimeError: If there is an issue creating the PromptResponse or OpenAIUsage objects.
         """
         start_time = time.time()
-        chat_completion = current_app.openai_service.generate_chat_completion(prompts)
+        chat_completion = current_app.openai_service.generate_chat_completion(
+            prompt_messages, model, max_tokens
+        )
         response_time = time.time() - start_time
         # always set responses to an array even if only 1 choice
         # destructure the object since there are other things in the
@@ -55,7 +57,7 @@ class PromptResponseService:
 
         try:
             prompt_response = PromptResponse(
-                prompts=prompts,
+                prompts=prompt_messages,
                 responses=responses,
                 response_time=response_time,
                 user=user,

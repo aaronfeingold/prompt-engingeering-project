@@ -54,14 +54,14 @@ def query_prompt_responses(request):
     user_profile = UserService.get_user_profile(user_identity)
     if user_profile["role"] == "team_leader":
         user_list = request.args.getlist("users")
-    if user_list:
-        if UserService.is_user_admin_or_higher(user_profile["role"]):
-            user_identity = user_list
-        elif user_profile["leading_teams"]:
-            team_members = []
-            for team_id in user_profile["leading_teams"]:
-                team_members.extend(UserService.get_team_members(team_id))
-            user_identity = list(set(user_list) & set(team_members))
+        if user_list:
+            if UserService.is_user_admin_or_higher(user_profile["role"]):
+                user_identity = user_list
+            elif user_profile["leading_teams"]:
+                team_members = []
+                for team_id in user_profile["leading_teams"]:
+                    team_members.extend(UserService.get_team_members(team_id))
+                user_identity = list(set(user_list) & set(team_members))
     try:
         # parse the args from the request
         page = int(request.args.get("page", 1))

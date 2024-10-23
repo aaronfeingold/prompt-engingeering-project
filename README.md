@@ -21,8 +21,7 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
 ## Setup Instructions
 
 ### Prequisites
-- Postgres > 13.3.x
-- Poetry
+- Postgres: Ansible installation is available [here](https://github.com/aaronfeingold/ajf-fedora-workstation-ansible)
 
 1. **Clone Repository**:
     ```

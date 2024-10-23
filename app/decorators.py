@@ -24,8 +24,8 @@ def role_required(required_roles):
     return decorator
 
 
-def validate_prompt_messages(messages):
-    for message in messages:
+def validate_prompt_messages(prompt_messages):
+    for message in prompt_messages:
         if "role" not in message or "content" not in message:
             raise ValidationError("Each message must have 'role' and 'content' keys")
         if not isinstance(message["content"], str) or message["content"] == "":

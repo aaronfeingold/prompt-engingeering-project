@@ -1,14 +1,18 @@
 from flask import jsonify
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity
 import openai
 from app.services import PromptResponseService, UserService
 from app.models import User, Team
 
 
-@jwt_required()
 def create_new_prompt_response(request):
-    prompt_messages = request.json.get("prompt_messages")
-    team_id = request.json.get("team_id")
+    validated_data = request.validated_data
+    prompt_messages, team_id, model, max_tokens = (
+        validated_data["prompt_messages"],
+        validated_data["team_id"],
+        validated_data["model"],
+        validated_data["max_tokens"],
+    )
     if not prompt_messages:
         return jsonify({"error": "A Message is required"}), 400
     try:
@@ -23,7 +27,7 @@ def create_new_prompt_response(request):
         if not team:
             return jsonify({"error": "Team not found"}), 404
         response_data = PromptResponseService.create_new_prompt_response(
-            prompt_messages, user, team
+            prompt_messages, user, team, model, max_tokens
         )
 
         return jsonify(response_data), 201
@@ -54,14 +58,14 @@ def query_prompt_responses(request):
     user_profile = UserService.get_user_profile(user_identity)
     if user_profile["role"] == "team_leader":
         user_list = request.args.getlist("users")
-    if user_list:
-        if UserService.is_user_admin_or_higher(user_profile["role"]):
-            user_identity = user_list
-        elif user_profile["leading_teams"]:
-            team_members = []
-            for team_id in user_profile["leading_teams"]:
-                team_members.extend(UserService.get_team_members(team_id))
-            user_identity = list(set(user_list) & set(team_members))
+        if user_list:
+            if UserService.is_user_admin_or_higher(user_profile["role"]):
+                user_identity = user_list
+            elif user_profile["leading_teams"]:
+                team_members = []
+                for team_id in user_profile["leading_teams"]:
+                    team_members.extend(UserService.get_team_members(team_id))
+                user_identity = list(set(user_list) & set(team_members))
     try:
         # parse the args from the request
         page = int(request.args.get("page", 1))

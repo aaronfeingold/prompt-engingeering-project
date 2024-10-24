@@ -1,24 +1,27 @@
-# Flask API Project - Prompt Engineering
+# Prompt Engineering 101
 
-## Project Overview
+## Overview
 
-This Flask API project integrates OpenAI's language models for prompt engineering. It allows users to generate text based on prompts and stores responses in a PostgreSQL database.
+This Flask API project integrates OpenAI's language models for prompt engineering. It allows users to generate _text_ based on prompts and stores responses in a PostgreSQL database.
 
 ## Features
 
 - Generate AI-driven responses based on user prompts.
 - Store prompt-response pairs along with metadata (response time, creation date).
 - RESTful API endpoints for creating prompts and retrieving responses.
+- OpenAI Usage Analysis
+- User Budgeting Controls
 
-## Technologies Used
-
-- Flask
-- SQLAlchemy
-- Python-dotenv
-- Flask-Migrate
+## Tech Notes
+- Flask App
 - OpenAI API
+- Poetry
+- PostgreSQL
 
 ## Setup Instructions
+
+### Prequisites
+- Postgres: Ansible installation is available [here](https://github.com/aaronfeingold/ajf-fedora-workstation-ansible)
 
 1. **Clone Repository**:
     ```
@@ -27,12 +30,11 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
     ```
 2. **Set Up Virtual Environment**:
     ```
-    python -m venv venv
-    source venv/bin/activate
+    poetry shell
     ```
 3. **Install Dependencies**:
     ```
-    pip install -r requirements.txt
+    poetry install
     ```
 4. **Setup Environment Variables**
 - Create a .env file in the root directory
@@ -40,75 +42,35 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
     DATABASE_URL=postgresql://username:password@localhost/dbname
     OPENAI_API_KEY=your-openai-api-key
     ```
-5. **Database Migration**:
-- Initialize migrations:
+5. **Database Migrations**:
+- Initialize:
 ```
 flask db init
 ```
-- Generate a migration script:
+- Generate:
 ```
 flask db migrate -m "Initial migration"
 ```
-- Apply the migration:
+- Apply:
 ```
 flask db upgrade
 ```
-## Poetry Setup
 
-1. **Install Poetry**:
-    ```sh
-    curl -sSL https://install.python-poetry.org | python3 -
-    ```
-2. **Install Dependencies with Poetry**:
-    ```sh
-    poetry install
-    ```
 
-## Development
+## API v1 Reference
 
-### Pre-commit Hooks
-
-This project uses pre-commit hooks to ensure code quality. The hooks run `black` and `flake8`.
-
-1. **Install pre-commit**:
-    ```sh
-    poetry run pre-commit install
-    ```
-2. **Run pre-commit hooks manually**:
-    ```sh
-    poetry run pre-commit run --all-files
-
-## Usage
-
-- Create prompts using POST requests to `/prompt`.
-- Retrieve stored prompts and responses using GET requests to `/prompts`.
-
-## API Endpoints
-
+### /openai
 - **POST `/prompt`**: Create a new prompt and generate a response.
-- **GET `/prompts`**: Retrieve all stored prompts and responses.
-
-## Testing/Debugging
-
-**Test Suites**
-- Run tests using `pytest` to ensure functionality and reliability.
-
-**cURL Requests**
-- When using Visual Studio Code Python File Debugger, these examples can used to interrogate endpoints:
-
-```
-curl -X POST http://127.0.0.1:5000/api/v1/openai/prompt -H "Content-Type: application/json" -d '{"prompt_messages": [{"role": "user", "content": "Write a short story about a brave knight who saves a village from a dragon."}]}'
-```
-
-and
-
-```
-curl http://127.0.0.1:5000/api/v1/openai/prompt-responses -H "Content-Type: application/json"
-```
+- **GET `/prompt-responses`**: Retrieve all stored prompts and responses
+### /user
+- **POST `/register`**: Initialize a new user on a team
+- **POST `/login`**
+### /team
+- **POST `/register`**: Initialize a new team
 
 ## Deployment
 
-- Deploy the Flask API project to a production environment using standard Flask deployment practices.
+**TDB**
 
 ## Contributing
 

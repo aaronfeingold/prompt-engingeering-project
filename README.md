@@ -13,17 +13,20 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
 - User Budgeting Controls
 
 ## Tech Notes
-- Flask App
+- Flask API
 - OpenAI API
-- Poetry
-- PostgreSQL
+- Postgres
+
 
 ## Setup Instructions
 
 ### Prequisite
 - _Note_: Ansible on Fedora Workstation 39 installation will includes these deps and more. Click [here](https://github.com/aaronfeingold/ajf-fedora-workstation-ansible) for more details
-- Docker
+- Python 3.11.10
+- [Docker](#docker-instructions)
 - Postgres
+  - Create a new DB with creds
+  - See [Environment Vars](#environment-variables) section
 - Poetry
 
 1. **Clone Repository**:
@@ -46,7 +49,7 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
     OPENAI_API_KEY=your-openai-api-key
     ```
 5. **Database**:
-- check postgresql on fedora: `systemctl status postgresql`
+- _Note_: check postgresql: `systemctl status postgresql`
 - Initialize:
 ```
 flask db init
@@ -61,20 +64,61 @@ flask db upgrade
 ```
 
 
-## API v1 Reference
-
-### /openai
-- **POST `/prompt`**: Create a new prompt and generate a response.
-- **GET `/prompt-responses`**: Retrieve all stored prompts and responses
-### /user
-- **POST `/register`**: Initialize a new user on a team
-- **POST `/login`**
-### /team
-- **POST `/register`**: Initialize a new team
-
 ## Deployment
 
-**TDB**
+## Docker Instructions
+
+### Using Docker Compose
+
+1. **Build and Start the Containers**:
+    Navigate to the root directory of the project where the `docker-compose.yml` file is located and run the following command:
+    ```sh
+    docker-compose up --build -d
+    ```
+    This will build the Docker images and start the containers in detached mode.
+
+2. **Environment Variables**:
+    Ensure you have a `.env` file in the root directory with the necessary environment variables:
+    ```env
+    OPENAI_API_KEY=your-openai-api-key
+    JWT_SECRET_KEY=your-jwt-secret-key
+    JWT_ACCESS_TOKEN_EXPIRES=30
+    ```
+
+### Accessing the Flask App
+
+3. **Access the Application**:
+    You can now access the Flask app at `http://localhost:5000`. To test the endpoints, you can use tools like `curl` or Postman.
+
+    Example using `curl`:
+    ```sh
+    curl -X POST http://localhost:5000/openai/prompt -d '{"prompt": "Hello, world!"}' -H "Content-Type: application/json"
+    ```
+    - _Note_: Postman project will soon be exported. Check back later.
+
+### Stopping and Removing the Containers
+
+4. **Stop the Containers**:
+    To stop the running containers, use the following command:
+    ```sh
+    docker-compose down
+    ```
+
+### Additional Docker Compose Commands
+
+- **View Logs**:
+    To view the logs of the running containers, use:
+    ```sh
+    docker-compose logs
+    ```
+
+- **Access the Container Shell**:
+    To access the shell of the running `api` container, use:
+    ```sh
+    docker-compose exec api /bin/sh
+    ```
+
+Make sure to replace the environment variable values in the [.env](http://_vscodecontentref_/1) file with your actual credentials.
 
 ## Contributing
 

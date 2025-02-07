@@ -16,6 +16,7 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
 - Flask API
 - OpenAI API
 - Postgres
+- Docker
 
 
 ## Setup Instructions
@@ -24,9 +25,6 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
 - _Note_: Ansible on Fedora Workstation 39 installation will includes these deps and more. Click [here](https://github.com/aaronfeingold/ajf-fedora-workstation-ansible) for more details
 - Python 3.11.10
 - [Docker](#docker-instructions)
-- Postgres
-  - Create a new DB with creds
-  - See [Environment Vars](#environment-variables) section
 - Poetry
 
 1. **Clone Repository**:
@@ -117,6 +115,9 @@ flask db upgrade
     ```sh
     docker-compose exec api /bin/sh
     ```
+- **Query PG*
+  - `psql -h localhost -p 5433 -U user -d openai_budgeting` enter pass, `\t` tables, (you should already have a default user too)
+
 
 Make sure to replace the environment variable values in the [.env](http://_vscodecontentref_/1) file with your actual credentials.
 

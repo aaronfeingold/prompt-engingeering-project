@@ -20,15 +20,18 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
 
 ## Setup Instructions
 
-### Prequisites
-- Postgres: Ansible installation is available [here](https://github.com/aaronfeingold/ajf-fedora-workstation-ansible)
+### Prequisite
+- _Note_: Ansible on Fedora Workstation 39 installation will includes these deps and more. Click [here](https://github.com/aaronfeingold/ajf-fedora-workstation-ansible) for more details
+- Docker
+- Postgres
+- Poetry
 
 1. **Clone Repository**:
     ```
     git clone https://github.com/aaronfeingold/prompt-engingeering-project
     cd prompt-engingeering-project
     ```
-2. **Set Up Virtual Environment**:
+2. **Virtual Environment**:
     ```
     poetry shell
     ```
@@ -36,13 +39,14 @@ This Flask API project integrates OpenAI's language models for prompt engineerin
     ```
     poetry install
     ```
-4. **Setup Environment Variables**
+4. **Environment Variables**
 - Create a .env file in the root directory
     ```
     DATABASE_URL=postgresql://username:password@localhost/dbname
     OPENAI_API_KEY=your-openai-api-key
     ```
-5. **Database Migrations**:
+5. **Database**:
+- check postgresql on fedora: `systemctl status postgresql`
 - Initialize:
 ```
 flask db init

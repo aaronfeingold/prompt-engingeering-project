@@ -7,11 +7,12 @@ from app.models import User, Team
 
 def create_new_prompt_response(request):
     validated_data = request.validated_data
-    prompt_messages, team_id, model, max_tokens = (
+    prompt_messages, team_id, model, max_tokens, provider = (
         validated_data["prompt_messages"],
         validated_data["team_id"],
         validated_data["model"],
         validated_data["max_tokens"],
+        validated_data["provider"],
     )
     if not prompt_messages:
         return jsonify({"error": "A Message is required"}), 400
@@ -30,7 +31,13 @@ def create_new_prompt_response(request):
         return (
             jsonify(
                 PromptResponseService.create_new_prompt_response(
-                    prompt_messages, user, team, model, max_tokens, conversation_id=None
+                    prompt_messages,
+                    user,
+                    team,
+                    model,
+                    max_tokens,
+                    provider,
+                    conversation_id=None,
                 )
             ),
             201,

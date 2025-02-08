@@ -30,7 +30,7 @@ def create_new_prompt_response(request):
         return (
             jsonify(
                 PromptResponseService.create_new_prompt_response(
-                    prompt_messages, user, team, model, max_tokens
+                    prompt_messages, user, team, model, max_tokens, conversation_id=None
                 )
             ),
             201,

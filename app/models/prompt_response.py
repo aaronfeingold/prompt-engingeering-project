@@ -16,6 +16,7 @@ class PromptResponse(db.Model):
     usages = db.relationship("OpenAIUsage", back_populates="prompt_response")
     user = db.relationship("User", back_populates="prompt_responses")
     team = db.relationship("Team", back_populates="prompt_responses")
+    conversation = db.relationship("Conversation", back_populates="prompt_responses")
     response_time = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

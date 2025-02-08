@@ -1,11 +1,13 @@
 from flask import current_app
 import time
-from app.models import PromptResponse, OpenAIUsage, User
+from app.models import PromptResponse, OpenAIUsage, User, Conversation
 
 
 class PromptResponseService:
     @staticmethod
-    def create_new_prompt_response(prompt_messages, user, team, model, max_tokens):
+    def create_new_prompt_response(
+        prompt_messages, user, team, model, max_tokens, conversation_id=None
+    ):
         """
         Generates a new prompt response using the OpenAI API,
         serializes the input prompt and the generated response,
@@ -33,6 +35,14 @@ class PromptResponseService:
         Raises:
         - RuntimeError: If there is an issue creating the PromptResponse or OpenAIUsage objects.
         """
+        if conversation_id:
+            # future proofing
+            # TODO: delete old conversations and prompt responses and limit user memory DB space
+            conversation = Conversation.query.get(conversation_id)
+        if not conversation:
+            conversation = Conversation()
+            conversation.add_to_db()
+
         start_time = time.time()
         chat_completion = current_app.openai_service.generate_chat_completion(
             prompt_messages, model, max_tokens
@@ -62,6 +72,7 @@ class PromptResponseService:
                 response_time=response_time,
                 user=user,
                 team=team,
+                conversation=conversation,
             )
             prompt_response.add_to_db()
         except Exception as e:

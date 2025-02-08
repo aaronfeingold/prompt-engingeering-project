@@ -1,8 +1,14 @@
 from flask import jsonify
 from flask_jwt_extended import get_jwt_identity
 import openai
-from app.services import PromptResponseService, UserService, TeamService
+from app.services import (
+    PromptResponseService,
+    UserService,
+    TeamService,
+    estimate_tokens,
+)
 from app.models import User, Team
+from app.constants import DEFAULT_MAX_TOKENS
 
 
 def create_new_prompt_response(request):
@@ -16,6 +22,19 @@ def create_new_prompt_response(request):
     )
     if not prompt_messages:
         return jsonify({"error": "A Message is required"}), 400
+
+    # check the size of the input tokens:
+    input_token_estimation = estimate_tokens(prompt_messages, model)
+
+    if input_token_estimation > max_tokens if max_tokens else DEFAULT_MAX_TOKENS:
+        return (
+            jsonify(
+                {
+                    "error": f"Input tokens ({input_token_estimation}) exceed the maximum tokens ({max_tokens})"
+                }
+            ),
+            400,
+        )
     try:
         # Extract user information from the JWT token
         user_id = get_jwt_identity()
@@ -63,20 +82,25 @@ def create_new_prompt_response(request):
 
 
 def query_prompt_responses(request):
-    # get the username
+    # get the USERNAME aka the identity
     user_identity = get_jwt_identity()
+    team_id = request.params.get("team_id")
     # if there is a list of users in the request, use that instead
     # but first check if the user is an admin or a team leader
     # if team leader, only allow them to query their team's responses
     user_profile = UserService.get_user_profile(user_identity)
     usernames = [user_profile["username"]]
+    # check the profile for the role
     if user_profile["role"] == "team_leader":
         user_list = request.args.getlist("users")
+        # if they are giving a list of users, are these users on their team?
         if user_list:
             team_members = []
             for team_id in user_profile["leading_teams"]:
-                team_members.extend(TeamService.get_team_members(team_id))
+                team_members.extend(TeamService.get_leaders_teammates(team_id))
             usernames = list(set(user_list) & set(team_members))
+        # otherwise, just get team members on the given team
+        # if no team given, and no users: then this person wants there own info
     try:
         # parse the args from the request
         page = int(request.args.get("page", 1))

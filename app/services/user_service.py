@@ -39,9 +39,7 @@ class UserService:
         team = Team.query.filter_by(leader_id=team_leader_id).first()
         if not team:
             raise ValueError("Team not found")
-        return [
-            member.id for member in team.members
-        ]  # Assuming 'members' is a relationship in the Team model
+        return [member.username for member in team.teammates]
 
     @staticmethod
     def is_user_admin_or_higher(user_role):

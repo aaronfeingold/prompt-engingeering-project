@@ -69,7 +69,7 @@ def login():
     return jsonify({"message": "Invalid credentials"}), 401
 
 
-@user_bp.route("/logout", methods=["POST"])
+@user_bp.route("/usage", methods=["POST"])
 @jwt_required()
 def logout():
     # JWT tokens are stateless, so we can't invalidate them server-side.

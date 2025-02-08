@@ -1,6 +1,6 @@
 from flask import current_app
 import time
-from app.models import PromptResponse, OpenAIUsage
+from app.models import PromptResponse, OpenAIUsage, User
 
 
 class PromptResponseService:
@@ -90,7 +90,7 @@ class PromptResponseService:
             ) from e
 
     @staticmethod
-    def query_prompt_responses(page, per_page, sort_by, sort_order, users=None):
+    def query_prompt_responses(page, per_page, sort_by, sort_order, user_names=None):
         """
         Retrieves all prompt responses from the database and returns them as a list of dictionaries.
 
@@ -107,6 +107,10 @@ class PromptResponseService:
 
         try:
             query = PromptResponse.query
+
+            # Join with User and filter by usernames if provided
+            if user_names:
+                query = query.join(User).filter(User.username.in_(user_names))
 
             if sort_order == "asc":
                 query = query.order_by(getattr(PromptResponse, sort_by).asc())

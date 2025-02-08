@@ -84,7 +84,7 @@ def query_prompt_responses(request):
         return (
             jsonify(
                 PromptResponseService.query_prompt_responses(
-                    page, per_page, sort_by, sort_order, users=user_identity
+                    page, per_page, sort_by, sort_order, user_names=user_identity
                 )
             ),
             200,

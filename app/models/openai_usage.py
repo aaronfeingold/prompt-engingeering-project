@@ -2,6 +2,7 @@ from app.database import db
 from datetime import datetime
 
 
+# TODO: ABSTRACT A BASE USAGE CLASS FOR EACH PROVIDER (OPENAI, GOOGLE, FACEBOOK, ETC)
 class OpenAIUsage(db.Model):
     __tablename__ = "openai_usage"
     id = db.Column(db.Integer, primary_key=True)

@@ -1,7 +1,7 @@
 from flask import jsonify
 from flask_jwt_extended import get_jwt_identity
 import openai
-from app.services import PromptResponseService, UserService
+from app.services import PromptResponseService, UserService, TeamService
 from app.models import User, Team
 
 
@@ -51,21 +51,20 @@ def create_new_prompt_response(request):
 
 
 def query_prompt_responses(request):
+    # get the username
     user_identity = get_jwt_identity()
     # if there is a list of users in the request, use that instead
     # but first check if the user is an admin or a team leader
     # if team leader, only allow them to query their team's responses
     user_profile = UserService.get_user_profile(user_identity)
+    usernames = [user_profile["username"]]
     if user_profile["role"] == "team_leader":
         user_list = request.args.getlist("users")
         if user_list:
-            if UserService.is_user_admin_or_higher(user_profile["role"]):
-                user_identity = user_list
-            elif user_profile["leading_teams"]:
-                team_members = []
-                for team_id in user_profile["leading_teams"]:
-                    team_members.extend(UserService.get_team_members(team_id))
-                user_identity = list(set(user_list) & set(team_members))
+            team_members = []
+            for team_id in user_profile["leading_teams"]:
+                team_members.extend(TeamService.get_team_members(team_id))
+            usernames = list(set(user_list) & set(team_members))
     try:
         # parse the args from the request
         page = int(request.args.get("page", 1))
@@ -84,7 +83,7 @@ def query_prompt_responses(request):
         return (
             jsonify(
                 PromptResponseService.query_prompt_responses(
-                    page, per_page, sort_by, sort_order, user_names=user_identity
+                    page, per_page, sort_by, sort_order, usernames=usernames
                 )
             ),
             200,

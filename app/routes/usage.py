@@ -8,6 +8,7 @@ import pandas as pd
 
 usage_bp = Blueprint("usage", __name__)
 
+# TODO: Consider the pricing models of other providers
 # Pricing per 1,000,000 tokens in USD
 # TODO: Scrape for this data routinely from OpenAI's pricing page or API
 # Probably only changes 3-4x per year

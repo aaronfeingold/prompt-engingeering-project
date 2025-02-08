@@ -6,7 +6,13 @@ from app.models import PromptResponse, OpenAIUsage, User, Conversation
 class PromptResponseService:
     @staticmethod
     def create_new_prompt_response(
-        prompt_messages, user, team, model, max_tokens, conversation_id=None
+        prompt_messages,
+        user,
+        team,
+        model,
+        max_tokens,
+        provider="openai",
+        conversation_id=None,
     ):
         """
         Generates a new prompt response using the OpenAI API,
@@ -44,9 +50,14 @@ class PromptResponseService:
             conversation.add_to_db()
 
         start_time = time.time()
-        chat_completion = current_app.openai_service.generate_chat_completion(
-            prompt_messages, model, max_tokens
-        )
+        if provider == "openai":
+            chat_completion = current_app.openai_service.generate_chat_completion(
+                prompt_messages, model, max_tokens
+            )
+        else:
+            raise ValueError(
+                f"Provider '{provider}' is not supported. Please use 'openai'."
+            )
         response_time = time.time() - start_time
         # always set responses to an array even if only 1 choice
         # destructure the object since there are other things in the

@@ -1,7 +1,10 @@
-from flask import Blueprint, request
-from flask_jwt_extended import jwt_required
+from flask import Blueprint
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.decorators import role_required, validate_schema, PromptResponseSchema
 from app.models.user import RoleEnum
+from app.database import db
+from app.models import PromptResponse, OpenAIUsage
+import pandas as pd
 
 usage_bp = Blueprint("usage", __name__)
 
@@ -21,36 +24,47 @@ MODEL_PRICING = {
 }
 
 
-@usage_bp.route("/user", methods=["GET"])
+@usage_bp.route("/user/", methods=["GET"])
 @jwt_required()
 @role_required([RoleEnum.USER, RoleEnum.ADMIN])
 @validate_schema(PromptResponseSchema())
-def post_prompt():
-    import pandas as pd
-    from sqlalchemy import create_engine
-
-    data = request.get_json()
-    user = data.get("user")
-    # Database connection
-    DATABASE_URL = "postgresql://username:password@localhost/dbname"
-    engine = create_engine(DATABASE_URL)
-
-    # Fetch data
-    query = """
-    SELECT
-        pr.id AS prompt_response_id,
-        pr.user_id,
-        pr.team_id,
-        pr.created_at,
-        ou.prompt_tokens,
-        ou.completion_tokens,
-        ou.model_name
-    FROM
-        prompt_response pr
-    JOIN
-        openai_usage ou ON pr.id = ou.prompt_response_id;
+def get_usage_user():
     """
-    df = pd.read_sql(query, engine)
+    Fetches the AI usage statistics for the logged-in user, including cost calculations.
+    """
+    user_id = get_jwt_identity()
+    # Fetch user's usage data
+    results = (
+        db.query(
+            PromptResponse.id.label("prompt_response_id"),
+            PromptResponse.user_id,
+            PromptResponse.team_id,
+            PromptResponse.created_at,
+            OpenAIUsage.prompt_tokens,
+            OpenAIUsage.completion_tokens,
+            OpenAIUsage.model_name,
+        )
+        .join(OpenAIUsage, PromptResponse.id == OpenAIUsage.prompt_response_id)
+        .filter(PromptResponse.user_id == user_id)
+        .all()
+    )
+
+    if not results:
+        raise user_id(status_code=404, detail="No usage data found for user.")
+
+    # Convert to Pandas DataFrame
+    df = pd.DataFrame(
+        results,
+        columns=[
+            "prompt_response_id",
+            "user_id",
+            "team_id",
+            "created_at",
+            "prompt_tokens",
+            "completion_tokens",
+            "model_name",
+        ],
+    )
 
     # Calculate cost per prompt
     def calculate_cost(row):
@@ -62,10 +76,20 @@ def post_prompt():
             pricing = MODEL_PRICING[model]
             input_cost = input_tokens * pricing.get("input", 0)
             output_cost = output_tokens * pricing.get("output", 0)
-            total_cost = input_cost + output_cost
-            return total_cost
-        else:
-            # Handle cases where the model is not in the pricing dictionary
-            return 0.0
+            return input_cost + output_cost
+        return 0.0
 
     df["cost"] = df.apply(calculate_cost, axis=1)
+
+    # Aggregate total usage cost
+    total_cost = df["cost"].sum()
+    total_prompt_tokens = df["prompt_tokens"].sum()
+    total_completion_tokens = df["completion_tokens"].sum()
+
+    return {
+        "user_id": user_id,
+        "total_cost": total_cost,
+        "total_prompt_tokens": total_prompt_tokens,
+        "total_completion_tokens": total_completion_tokens,
+        "usage_breakdown": df.to_dict(orient="records"),
+    }

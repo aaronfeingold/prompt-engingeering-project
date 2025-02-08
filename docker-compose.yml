@@ -14,12 +14,7 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ACCESS_TOKEN_EXPIRES=30
     depends_on:
-      db:
-        condition: service_healthy
-    command: >
-      sh -c "flask db upgrade &&
-             python seed.py &&
-             python run.py"
+      - db
     networks:
       - app-network
 

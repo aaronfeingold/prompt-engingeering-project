@@ -1,4 +1,4 @@
-from app.models import User, Team
+from app.models import User
 from app.models.user import RoleEnum
 
 
@@ -24,22 +24,6 @@ class UserService:
             "role": user.role,
             "leading_teams": user.leading_teams,
         }
-
-    @staticmethod
-    def get_team_members(team_leader_id):
-        """
-        Retrieves the team members for the given team leader ID.
-
-        Parameters:
-        - team_leader_id (str): The ID of the team leader.
-
-        Returns:
-        - list: A list of user IDs who are members of the team.
-        """
-        team = Team.query.filter_by(leader_id=team_leader_id).first()
-        if not team:
-            raise ValueError("Team not found")
-        return [mate.username for mate in team.teammates]
 
     @staticmethod
     def is_user_admin_or_higher(user_role):

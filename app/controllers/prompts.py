@@ -25,12 +25,17 @@ def create_new_prompt_response(request):
         # Get team information
         team = Team.query.get(team_id)
         if not team:
+            # TODO: get try to get the user's team if not supplied in request
             return jsonify({"error": "Team not found"}), 404
-        response_data = PromptResponseService.create_new_prompt_response(
-            prompt_messages, user, team, model, max_tokens
+        return (
+            jsonify(
+                PromptResponseService.create_new_prompt_response(
+                    prompt_messages, user, team, model, max_tokens
+                )
+            ),
+            201,
         )
 
-        return jsonify(response_data), 201
     except openai.RateLimitError as e:
         return (
             jsonify(

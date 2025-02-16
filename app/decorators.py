@@ -3,7 +3,7 @@ from flask_jwt_extended import get_jwt_identity
 from flask import request, jsonify
 from marshmallow import Schema, fields, ValidationError
 from app.models import User
-from app.constants import DEFAULT_MODEL, DEFAULT_MAX_TOKENS
+from app.constants import OPENAI_DEFAULT_MODEL, DEFAULT_MAX_USER_INPUT_TOKENS
 
 
 def role_required(required_roles):
@@ -37,8 +37,8 @@ class PromptResponseSchema(Schema):
         fields.Dict(required=True), required=True, validate=validate_prompt_messages
     )
     team_id = fields.Str(required=True)
-    model = fields.Str(missing=DEFAULT_MODEL)
-    max_tokens = fields.Int(missing=DEFAULT_MAX_TOKENS)
+    model = fields.Str(missing=OPENAI_DEFAULT_MODEL)
+    max_tokens = fields.Int(missing=DEFAULT_MAX_USER_INPUT_TOKENS)
 
 
 # Create the validation decorator

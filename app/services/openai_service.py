@@ -1,5 +1,5 @@
 from openai import OpenAI
-from app.constants import DEFAULT_MODEL, DEFAULT_MAX_TOKENS
+from app.constants import OPENAI_DEFAULT_MODEL, DEFAULT_MAX_TOKENS
 
 
 class OpenAIService:
@@ -7,7 +7,11 @@ class OpenAIService:
         self.client = OpenAI(api_key=api_key)
 
     def generate_chat_completion(
-        self, prompt_messages, model=DEFAULT_MODEL, max_tokens=DEFAULT_MAX_TOKENS, n=1
+        self,
+        prompt_messages,
+        model=OPENAI_DEFAULT_MODEL,
+        max_tokens=DEFAULT_MAX_TOKENS,
+        n=1,
     ):
         """
         Generate a response from OpenAI API.

@@ -8,45 +8,68 @@ from app.services import (
     estimate_tokens,
 )
 from app.models import User, Team
-from app.constants import DEFAULT_MAX_TOKENS
+from app.constants import DEFAULT_MAX_USER_INPUT_TOKENS
 
 
 def create_new_prompt_response(request):
-    validated_data = request.validated_data
-    prompt_messages, team_id, model, max_tokens, provider = (
-        validated_data["prompt_messages"],
-        validated_data["team_id"],
-        validated_data["model"],
-        validated_data["max_tokens"],
-        validated_data["provider"],
-    )
-    if not prompt_messages:
-        return jsonify({"error": "A Message is required"}), 400
-
-    # check the size of the input tokens:
-    input_token_estimation = estimate_tokens(prompt_messages, model)
-
-    if input_token_estimation > max_tokens if max_tokens else DEFAULT_MAX_TOKENS:
-        return (
-            jsonify(
-                {
-                    "error": f"Input tokens ({input_token_estimation}) exceed the maximum tokens ({max_tokens})"
-                }
-            ),
-            400,
-        )
     try:
-        # Extract user information from the JWT token
+        validated_data = request.validated_data
+        (
+            prompt_messages,
+            team_id,
+            model,
+            max_input_tokens,
+            max_output_tokens,
+            max_tokens,
+            provider,
+        ) = (
+            validated_data["prompt_messages"],
+            validated_data["team_id"],
+            validated_data["model"],
+            validated_data["max_ouput_tokens"],
+            validated_data["max_input_tokens"],
+            validated_data["max_tokens"],
+            validated_data["provider"],
+        )
+        if not prompt_messages:
+            return jsonify({"error": "A Message is required"}), 400
+
         user_id = get_jwt_identity()
         user = User.query.get(user_id)
         if not user:
             return jsonify({"error": "User not found"}), 404
 
+        input_token_estimation = estimate_tokens(prompt_messages, model)
+        max_input_tokens = (
+            max_input_tokens
+            if max_input_tokens
+            else (
+                user["max_input_tokens"]
+                if user["max_input_tokens"]
+                else DEFAULT_MAX_USER_INPUT_TOKENS
+            )
+        )
+        if input_token_estimation > max_input_tokens:
+            return (
+                jsonify(
+                    {
+                        "error": (
+                            f"Input tokens ({input_token_estimation}) exceeds the "
+                            f"maximum user input tokens ({max_input_tokens})"
+                        )
+                    }
+                ),
+                400,
+            )
+
         # Get team information
         team = Team.query.get(team_id)
         if not team:
             # TODO: get try to get the user's team if not supplied in request
-            return jsonify({"error": "Team not found"}), 404
+            if user.teams[0]["name"]:
+                team = Team.query.filter_by(name=user.teams[0]["name"]).first()
+            else:
+                return jsonify({"error": "Team not found"}), 404
         return (
             jsonify(
                 PromptResponseService.create_new_prompt_response(
